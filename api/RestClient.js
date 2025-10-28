@@ -14,17 +14,22 @@ const buildHeaders = (contentType = "application/json") => ({
 });
 
 const handleResponse = async (response, useWaitControl, isEvaluateMessage) => {
-    if (useWaitControl) CoreUtils.waitControlShow();
+    try {
+        if (!response || response.status === 404 || response.stack || response.TypeError) {
+            return response;
+        }
 
-    if (!response || response.status === 404 || response.stack || response.TypeError) {
-        return response;
+        const data = await response.json();
+
+        if (isEvaluateMessage) showValidationMessage(data);
+
+        return data;
+    } catch (error) {
+        CoreUtils.notificationError(error.message);
+        return null;
+    } finally {
+        if (useWaitControl) CoreUtils.waitControlHide(); // ← esto garantiza que el spinner se oculte
     }
-
-    const data = await response.json();
-
-    if (isEvaluateMessage) showValidationMessage(data);
-
-    return data;
 };
 
 const showValidationMessage = (response) => {
