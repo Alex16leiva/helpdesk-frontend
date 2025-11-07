@@ -28,7 +28,7 @@ export const MainLayout = ({ children }) => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            <AppBar position="static" sx={{ bgcolor: 'black' }}>
+            <AppBar position="sticky" sx={{ bgcolor: 'black', top: 0, zIndex: 1100 }}>
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Typography
                         variant="h6"
@@ -50,7 +50,7 @@ export const MainLayout = ({ children }) => {
                 </Toolbar>
             </AppBar>
 
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <Box component="main" sx={{}}>
                 {children}
             </Box>
         </Box>

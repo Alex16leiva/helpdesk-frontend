@@ -1,15 +1,24 @@
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import { TicketsInfo } from '../pages/Tickets/TicketsInfo';
+import { TicketDetail } from '../pages/Tickets/TicketDetail';
 
 export const Screens = [
+    {
+        path: 'TicketDetail/:ticketId',
+        showInMenu: false,
+        element: <TicketDetail />
+    },
     {
         title: 'Gestión de Tickets',
         hasSecurity: true,
         securityName: 'Ticket',
         icon: <ChatBubbleOutlineIcon sx={{ fontSize: 40, color: '#333' }} />,
         info: 'Crea, rastrea y resuelve tickets de soporte de manera eficiente con nuestro sistema intuitivo.',
-        path: '/tickets'
+        path: '/tickets',
+        element: <TicketsInfo />,
+        showInMenu: true
     },
     {
         title: 'Base de Conocimientos',
@@ -17,7 +26,9 @@ export const Screens = [
         securityName: 'Seguridad',
         icon: <MenuBookIcon sx={{ fontSize: 40, color: '#333' }} />,
         info: 'Accede a artículos y tutoriales para resolver problemas comunes de forma autónoma.',
-        path: '/conocimientos'
+        path: '/conocimientos',
+        element: null,
+        showInMenu: true
     },
     {
         title: 'Soporte 24/7',
@@ -25,7 +36,9 @@ export const Screens = [
         securityName: 'Seguridad',
         icon: <SupportAgentIcon sx={{ fontSize: 40, color: '#333' }} />,
         info: 'Nuestro equipo de agentes está disponible para ayudarte en cualquier momento.',
-        path: '/soporte'
+        path: '/soporte',
+        element: null,
+        showInMenu: true
     },
     {
         title: 'Soporte 24/7',
@@ -33,6 +46,9 @@ export const Screens = [
         securityName: 'Seguridad',
         icon: <SupportAgentIcon sx={{ fontSize: 40, color: '#333' }} />,
         info: 'Nuestro equipo de agentes está disponible para ayudarte en cualquier momento.',
-        path: '/soporte'
+        path: '/soporte',
+        element: null,
+        showInMenu: true
     }
+
 ];

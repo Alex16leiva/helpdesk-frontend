@@ -17,6 +17,7 @@ import { TicketHeader } from './TicketHeader';
 import { TicketPriorityBadge } from './components/TicketPriorityBadge';
 import { TicketStatusBadge } from './components/TicketStatusBadge';
 import { TimeHelper } from '../../utils/TimeHelper';
+import { useNavigate } from 'react-router-dom';
 
 const tabStateMap = {
     Todos: ['Open', 'InProcess'],
@@ -31,6 +32,12 @@ export const TicketsInfo = () => {
     const [pageIndex, setPageIndex] = useState(0);
     const [searchText, setSearchText] = useState('');
     const [activeTab, setActiveTab] = useState('Todos');
+    const navigate = useNavigate();
+
+    const handleClickIrATicket = (ticketId) => {
+        console.log(`Ir a ticket: ${ticketId}`);
+        navigate(`/TicketDetail/${ticketId}`);
+    }
 
     useEffect(() => {
         fetchTicketsInfo();
@@ -38,6 +45,7 @@ export const TicketsInfo = () => {
 
     useEffect(() => {
         getTickets(0, 10);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab]);
 
     const fetchTicketsInfo = () => {
@@ -86,7 +94,7 @@ export const TicketsInfo = () => {
     });
 
     return (
-        <Box sx={{}}>
+        <Box sx={{ p: 4 }}>
             <Typography variant="h4" sx={{ mb: 1, fontWeight: 700 }}>
                 Gestión de Tickets
             </Typography>
@@ -148,8 +156,15 @@ export const TicketsInfo = () => {
             {/* Listado de tickets */}
             <Grid container spacing={3}>
                 {rows.map((ticket) => (
-                    <Container key={ticket.ticketId}>
-                        <Paper elevation={1}
+                    <Grid item key={ticket.ticketId}
+                        sx={{
+                            width: '100%',
+                            pr: 12
+                        }}
+                    >
+                        <Paper
+                            onClick={() => handleClickIrATicket(ticket.ticketId)}
+                            elevation={1}
                             sx={{
                                 width: '100%',
                                 p: 3,
@@ -178,7 +193,7 @@ export const TicketsInfo = () => {
                                 Cuenta • {TimeHelper.tiempoTranscurrido(ticket.fechaCreado)}
                             </Typography>
                         </Paper>
-                    </Container>
+                    </Grid>
                 ))}
             </Grid>
 

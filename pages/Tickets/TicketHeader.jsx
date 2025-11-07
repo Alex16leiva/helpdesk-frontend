@@ -1,4 +1,4 @@
-import { Grid, Paper, Typography, Box } from '@mui/material';
+import { Paper, Typography, Box } from '@mui/material';
 
 export const TicketHeader = ({ items }) => {
     return (
