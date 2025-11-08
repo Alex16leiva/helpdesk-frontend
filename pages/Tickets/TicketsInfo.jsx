@@ -76,6 +76,10 @@ export const TicketsInfo = () => {
         }
     };
 
+    const CreateTicket = () => {
+        navigate('/create-ticket');
+    };
+
     const handleSearch = () => {
         getTickets(0, 10);
     };
@@ -138,17 +142,26 @@ export const TicketsInfo = () => {
 
             {/* Buscador */}
             <Container>
-                <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-                    <TextField
-                        label="Buscar por Ticket"
-                        variant="outlined"
-                        size="small"
-                        value={searchText}
-                        onChange={(e) => setSearchText(e.target.value)}
-                    />
-                    <Button variant="contained" onClick={handleSearch}>
-                        Buscar
-                    </Button>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+
+                    <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+                        <TextField
+                            label="Buscar por Ticket"
+                            variant="outlined"
+                            size="small"
+                            value={searchText}
+                            onChange={(e) => setSearchText(e.target.value)}
+                        />
+                        <Button variant="contained" onClick={handleSearch}>
+                            Buscar
+                        </Button>
+                    </Box>
+
+                    <Box sx={{ mb: 2 }}>
+                        <Button variant='contained' onClick={CreateTicket}>
+                            Crear Tickets
+                        </Button>
+                    </Box>
                 </Box>
             </Container>
             <Divider sx={{ mb: 3 }} />

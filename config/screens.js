@@ -3,12 +3,18 @@ import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { TicketsInfo } from '../pages/Tickets/TicketsInfo';
 import { TicketDetail } from '../pages/Tickets/TicketDetail';
+import { CreateTicket } from '../pages/Tickets/CreateTicket';
 
 export const Screens = [
     {
         path: 'TicketDetail/:ticketId',
         showInMenu: false,
         element: <TicketDetail />
+    },
+    {
+        path: '/create-ticket',
+        showInMenu: false,
+        element: <CreateTicket />
     },
     {
         title: 'Gestión de Tickets',
