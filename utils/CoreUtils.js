@@ -4,6 +4,15 @@ import { showLoading, hideLoading } from "../components/Controls/WaitControl/loa
 import { store } from "../app/stores/store";
 
 export class CoreUtils {
+
+    static hasValue(value) {
+        return isString(value) && !CoreUtils.isWhiteSpace(value);
+    }
+
+    static stringValueOrEmpty(value) {
+        return CoreUtils.hasValue(value) ? trim(value) : '';
+    }
+
     static isWhiteSpace(str) {
         return !str || /^\s*$/.test(str);
     }
