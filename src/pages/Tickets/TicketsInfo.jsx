@@ -17,6 +17,7 @@ import { TicketHeader } from './TicketHeader';
 import { TicketPriorityBadge } from './components/TicketPriorityBadge';
 import { TicketStatusBadge } from './components/TicketStatusBadge';
 import { TimeHelper } from '../../utils/TimeHelper';
+import { useNavigate } from 'react-router-dom';
 
 const tabStateMap = {
     Todos: ['Open', 'InProcess'],
@@ -31,6 +32,11 @@ export const TicketsInfo = () => {
     const [pageIndex, setPageIndex] = useState(0);
     const [searchText, setSearchText] = useState('');
     const [activeTab, setActiveTab] = useState('Todos');
+    const navigate = useNavigate();
+
+    const handleClickIrATicket = (ticketId) => {
+        navigate(`/TicketDetail/${ticketId}`);
+    }
 
     useEffect(() => {
         fetchTicketsInfo();
@@ -38,6 +44,7 @@ export const TicketsInfo = () => {
 
     useEffect(() => {
         getTickets(0, 10);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab]);
 
     const fetchTicketsInfo = () => {
@@ -68,6 +75,10 @@ export const TicketsInfo = () => {
         }
     };
 
+    const CreateTicket = () => {
+        navigate('/create-ticket');
+    };
+
     const handleSearch = () => {
         getTickets(0, 10);
     };
@@ -86,7 +97,7 @@ export const TicketsInfo = () => {
     });
 
     return (
-        <Box sx={{}}>
+        <Box sx={{ p: 4 }}>
             <Typography variant="h4" sx={{ mb: 1, fontWeight: 700 }}>
                 Gestión de Tickets
             </Typography>
@@ -130,17 +141,26 @@ export const TicketsInfo = () => {
 
             {/* Buscador */}
             <Container>
-                <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-                    <TextField
-                        label="Buscar por Ticket"
-                        variant="outlined"
-                        size="small"
-                        value={searchText}
-                        onChange={(e) => setSearchText(e.target.value)}
-                    />
-                    <Button variant="contained" onClick={handleSearch}>
-                        Buscar
-                    </Button>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+
+                    <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+                        <TextField
+                            label="Buscar por Ticket"
+                            variant="outlined"
+                            size="small"
+                            value={searchText}
+                            onChange={(e) => setSearchText(e.target.value)}
+                        />
+                        <Button variant="contained" onClick={handleSearch}>
+                            Buscar
+                        </Button>
+                    </Box>
+
+                    <Box sx={{ mb: 2 }}>
+                        <Button variant='contained' onClick={CreateTicket}>
+                            Crear Tickets
+                        </Button>
+                    </Box>
                 </Box>
             </Container>
             <Divider sx={{ mb: 3 }} />
@@ -148,8 +168,16 @@ export const TicketsInfo = () => {
             {/* Listado de tickets */}
             <Grid container spacing={3}>
                 {rows.map((ticket) => (
-                    <Container key={ticket.ticketId}>
-                        <Paper elevation={1}
+                    <Grid item key={ticket.ticketId}
+                        sx={{
+                            width: '100%',
+                            pr: 24,
+                            pl: 18,
+                        }}
+                    >
+                        <Paper
+                            onClick={() => handleClickIrATicket(ticket.ticketId)}
+                            elevation={3}
                             sx={{
                                 width: '100%',
                                 p: 3,
@@ -178,7 +206,7 @@ export const TicketsInfo = () => {
                                 Cuenta • {TimeHelper.tiempoTranscurrido(ticket.fechaCreado)}
                             </Typography>
                         </Paper>
-                    </Container>
+                    </Grid>
                 ))}
             </Grid>
 

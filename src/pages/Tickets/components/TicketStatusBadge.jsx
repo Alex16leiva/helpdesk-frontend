@@ -57,6 +57,8 @@ export const TicketStatusBadge = ({ status }) => {
                 py: 0.5,
                 borderRadius: 1,
                 textTransform: 'capitalize',
+                height: '32px',
+                width: '120px'
             }}
         />
     );

@@ -51,6 +51,15 @@ export class TimeHelper {
         }
     }
 
+    /**
+     * Formatea una fecha ISO en un formato legible en español.
+     * @param {string} fechaISO - La fecha en formato ISO.
+     * @returns {string} La fecha formateada en español.
+     *
+     * @example
+     * const fechaFormateada = TimeHelper.formatearFecha("2023-10-05T14:48:00.000Z");
+     * console.log(fechaFormateada); // "5 de octubre de 2023, 02:48 PM"
+     */
     static formatearFecha(fechaISO) {
         const opciones = {
             year: 'numeric',

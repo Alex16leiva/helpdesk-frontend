@@ -19,6 +19,13 @@ const handleResponse = async (response, useWaitControl, isEvaluateMessage) => {
             return response;
         }
 
+        if (response.status === 401) {
+            CoreUtils.notificationError("Tu sesión ha expirado. Por favor inicia sesión nuevamente.");
+            // Opcional: redirigir al login
+            // window.location.href = "/login";
+            return null;
+        }
+
         const data = await response.json();
 
         if (isEvaluateMessage) showValidationMessage(data);
@@ -35,6 +42,9 @@ const handleResponse = async (response, useWaitControl, isEvaluateMessage) => {
 const showValidationMessage = (response) => {
     if (!response) return;
 
+    if (response.status === 401) {
+        CoreUtils.notificationError("Tu sesión ha expirado. Por favor inicia sesión nuevamente.");
+    }
     if (response.status === 500) {
         CoreUtils.notificationError(JSON.stringify(response));
     }
