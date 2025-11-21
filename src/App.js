@@ -1,25 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import { ToastContainer } from 'react-toastify';
+import { store } from "./app/stores/store";
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
+import AppRoutes from './routes/AppRoutes';
+import LoadingOverlay from './components/Controls/WaitControl/LoadingOverlay';
 
-function App() {
+export const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <BrowserRouter>
+        <LoadingOverlay />
+        <ToastContainer position="top-right" autoClose={3000} />
+        <AppRoutes />
+      </BrowserRouter>
+    </Provider>
   );
-}
-
-export default App;
+};
