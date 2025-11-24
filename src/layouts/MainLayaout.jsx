@@ -21,8 +21,6 @@ export const MainLayout = ({ children }) => {
     };
 
     const handleHome = () => {
-        console.log("Navegar");
-
         navigate('/');
     }
 
