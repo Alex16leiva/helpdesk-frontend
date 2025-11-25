@@ -1,19 +1,17 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { RestClient } from "../../../api/RestClient";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { ArticleForm } from "./ArticleForm";
 
 // MUI
 import {
     Container,
 } from "@mui/material";
+import { CoreUtils } from "../../../utils/CoreUtils";
 
 function EditArticle() {
     const { id: articleId } = useParams();
-    const navigate = useNavigate();
-
     const [article, setArticle] = useState(null);
-    const [saving, setSaving] = useState(false);
 
     const fetchArticle = async (id) => {
         const response = await RestClient.get(`article/get-article/${id}`)
@@ -30,25 +28,23 @@ function EditArticle() {
 
     const handleSave = async () => {
         if (!article?.titulo?.trim() || !article?.contenido?.trim()) {
-
             return;
         }
         const request = {
             articulo: article
         }
-
         await RestClient.put(`article/update-article`, request);
     };
 
     return (
         <>
             <Container maxWidth="md" sx={{ py: 4 }}>
-                <ArticleForm
-                    article={article}
-                    onChange={handleChange}
-                    onSave={handleSave}
-                    saving={saving}
-                />
+                {CoreUtils.isValidEntity(article) &&
+                    <ArticleForm
+                        article={article}
+                        onChange={handleChange}
+                        onSave={handleSave}
+                    />}
             </Container>
         </>
     );
