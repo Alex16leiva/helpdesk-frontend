@@ -7,6 +7,7 @@ import { CreateTicket } from '../pages/Tickets/CreateTicket';
 import { KnowledgeBase } from '../pages/Knowledge/KnowledgeBase';
 import { ArticleDetail } from '../pages/Knowledge/Articulos/ArticleDetail';
 import EditArticle from '../pages/Knowledge/Articulos/editar';
+import { CreateArticle } from '../pages/Knowledge/Articulos/crear';
 
 export const Screens = [
     {
@@ -18,6 +19,11 @@ export const Screens = [
         path: '/create-ticket',
         showInMenu: false,
         element: <CreateTicket />
+    },
+    {
+        path: '/articles/new',
+        showInMenu: false,
+        element: <CreateArticle />
     },
     {
         path: '/articles/:id/edit',
