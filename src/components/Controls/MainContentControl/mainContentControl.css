@@ -1,0 +1,44 @@
+.mainContentControl {
+    overflow-y: auto;
+    position: fixed;
+    top: 82px;
+    padding: 10px;
+    bottom: 0;
+}
+
+@media only screen and (max-width: 600px) {
+    .mainContentControl {
+        right: 0px;
+        left: 0px;
+        bottom: 40px;
+    }
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+    .mainContentControl {
+        bottom: 0px;
+        right: 0px;
+        width: 100vw;
+        left: 0;
+    }
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+    .mainContentControl {
+        bottom: 0px;
+        right: 0px;
+        width: 100vw;
+    }
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+    .mainContentControl {
+        bottom: 0px;
+    }
+}
