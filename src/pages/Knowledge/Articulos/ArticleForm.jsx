@@ -11,6 +11,7 @@ import {
     Stack
 } from "@mui/material";
 import { CategorySearch } from "../Categorias/CategorySearch";
+import { TimeHelper } from "../../../utils/TimeHelper";
 
 export const ArticleForm = ({ article, onChange, onSave, saving, mode = "edit" }) => {
     return (
@@ -48,10 +49,10 @@ export const ArticleForm = ({ article, onChange, onSave, saving, mode = "edit" }
                     {mode === "edit" && (
                         <Box display="flex" gap={4}>
                             <Typography variant="body2">
-                                <strong>Creado:</strong> {article.fechaCreacion}
+                                <strong>Creado:</strong> {TimeHelper.formatearFechaCorta(article.fechaCreacion)}
                             </Typography>
                             <Typography variant="body2">
-                                <strong>Modificado:</strong> {article.fechaTransaccion}
+                                <strong>Modificado:</strong> {TimeHelper.formatearFechaCorta(article.fechaTransaccion)}
                             </Typography>
                         </Box>
                     )}

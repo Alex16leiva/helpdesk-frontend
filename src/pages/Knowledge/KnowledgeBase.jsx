@@ -1,10 +1,13 @@
-import { Box, Card, CardContent, Chip, Divider, Grid, InputAdornment, List, ListItem, ListItemText, Paper, TextField, Typography } from '@mui/material'
+import {
+    Box, Card, CardContent, Chip, Divider, Grid, InputAdornment,
+    Paper, TextField, Typography, Button, Pagination
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import AddIcon from '@mui/icons-material/Add';
 import { useEffect, useState } from 'react';
 import { RestClient } from '../../api/RestClient';
 import { useNavigate } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { CoreUtils } from '../../utils/CoreUtils';
 
 export const KnowledgeBase = () => {
     const [articulos, setArticulos] = useState([]);
@@ -14,7 +17,7 @@ export const KnowledgeBase = () => {
 
     const navigate = useNavigate();
 
-    const ObtenerArticulos = async (pageIndex, pageSize) => {
+    const ObtenerArticulos = async (pageIndex = 0, pageSize = 6) => {
         const request = {
             queryInfo: {
                 pageIndex,
@@ -32,7 +35,7 @@ export const KnowledgeBase = () => {
             setPageCount(response.pageCount);
             setPageIndex(pageIndex);
         }
-    }
+    };
 
     useEffect(() => {
         ObtenerArticulos();
@@ -44,14 +47,30 @@ export const KnowledgeBase = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 height: '100vh',
-                gap: 2
-            }}>
-            <Grid sx={{
-                textAlign: 'center',
-                backgroundColor: 'whitesmoke',
-                pt: 4,
-                gap: 2,
-            }}>
+            }}
+        >
+            {/* Botón superior derecho */}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', backgroundColor: 'whitesmoke', px: 4, pt: 2 }}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<AddIcon />}
+                    onClick={() => navigate('/articles/new')}
+                    sx={{ whiteSpace: 'nowrap' }}
+                >
+                    Crear nuevo artículo
+                </Button>
+            </Box>
+
+            {/* Encabezado y buscador */}
+            <Grid
+                sx={{
+                    textAlign: 'center',
+                    backgroundColor: 'whitesmoke',
+                    pt: 4,
+                    gap: 2,
+                }}
+            >
                 <Typography variant="h4" sx={{ color: '#060303ff' }}>
                     ¿Cómo podemos ayudarte?
                 </Typography>
@@ -70,11 +89,15 @@ export const KnowledgeBase = () => {
                             </InputAdornment>
                         ),
                     }}
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && ObtenerArticulos()}
                 />
 
                 <Divider orientation="horizontal" />
             </Grid>
 
+            {/* Listado de artículos */}
             <Grid container spacing={3}
                 sx={{
                     display: 'grid',
@@ -86,9 +109,8 @@ export const KnowledgeBase = () => {
                 }}
             >
                 {articulos.map((articulo) => (
-                    <Grid item xs={12} md={6} lg={4} key={articulo.id} >
+                    <Grid item xs={12} md={6} lg={4} key={articulo.id}>
                         <Paper elevation={4}>
-
                             <Card
                                 sx={{ cursor: 'pointer', transition: '0.3s', '&:hover': { boxShadow: 6 } }}
                                 onClick={() => navigate(`/articles/${articulo.id}`)}
@@ -116,7 +138,7 @@ export const KnowledgeBase = () => {
                                         </Typography>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                                             <VisibilityIcon fontSize="small" />
-                                            <Typography variant="caption">{articulo.contadorDeVisitas}</Typography>
+                                            <Typography variant="caption">{articulo.contadorDeVistas}</Typography>
                                         </Box>
                                     </Box>
                                 </CardContent>
@@ -125,7 +147,16 @@ export const KnowledgeBase = () => {
                     </Grid>
                 ))}
             </Grid>
+
+            {/* Paginación */}
+            <Box sx={{ display: 'flex', justifyContent: 'center', pb: 3 }}>
+                <Pagination
+                    count={pageCount}
+                    page={pageIndex + 1}
+                    onChange={(e, value) => ObtenerArticulos(value - 1)}
+                    color="primary"
+                />
+            </Box>
         </Box>
     );
 };
-
