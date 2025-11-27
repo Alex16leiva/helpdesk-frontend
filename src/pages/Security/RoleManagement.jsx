@@ -16,34 +16,43 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import { CoreUtils } from "../../utils/CoreUtils";
 import { RestClient } from "../../api/RestClient";
-import { DataGridControl } from "../../components/Controls"; // ✅ tu control
+import { DataGridControl, SearchControl } from "../../components/Controls"; // ✅ tu control
 
 export const RoleManagement = () => {
     const [roles, setRoles] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
     const [showRoleForm, setShowRoleForm] = useState(false);
     const [currentRole, setCurrentRole] = useState(null);
     const [totalItems, setTotalItems] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [pageIndex, setPageIndex] = useState(0);
 
-    const fetchRoles = useCallback(async (pageIndex, pageSize) => {
-        const request = {
-            queryInfo: {
-                pageIndex,
-                pageSize,
-                sortFields: ["rolId"],
-                ascending: true,
-                predicate: "",
-                paramValues: [],
-            },
-        };
+    const fetchRoles = useCallback(
+        async (pageIndex, pageSize) => {
+            const request = {
+                queryInfo: {
+                    pageIndex,
+                    pageSize,
+                    sortFields: ["rolId"],
+                    ascending: true,
+                    predicate: searchTerm ? "nombreRol.Contains(@0)" : "", // ejemplo de filtro
+                    paramValues: searchTerm ? [searchTerm] : [],
+                },
+            };
 
-        const response = await RestClient.post("user/obtener-roles", request);
-        if (response) {
-            setRoles(response.items || []);
-            setTotalItems(response.totalItems || 0);
+            const response = await RestClient.post("user/obtener-roles", request);
+            if (response) {
+                setRoles(response.items || []);
+                setTotalItems(response.totalItems || 0);
+            }
+        }, []);
+
+
+    const handleKeyDown = (event) => {
+        if (event.key === "Enter") {
+            fetchRoles(pageIndex, pageSize);
         }
-    }, []);
+    }
 
     useEffect(() => {
         fetchRoles(pageIndex, pageSize);
@@ -103,7 +112,21 @@ export const RoleManagement = () => {
         <Box sx={{ p: 2 }}>
             {!showRoleForm ? (
                 <>
-                    <Stack direction="row" justifyContent="flex-end" mb={2}>
+                    <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        mb={2}
+                    >
+                        <SearchControl
+                            width={300}
+                            textSearch="Buscar"
+                            value={searchTerm}
+                            onChange={event => setSearchTerm(event.target.value)}
+                            onClick={() => fetchRoles(pageIndex, pageSize)}
+                            onKeyDown={handleKeyDown}
+                        />
+
                         <Button
                             variant="contained"
                             startIcon={<AddIcon />}
@@ -114,20 +137,22 @@ export const RoleManagement = () => {
                     </Stack>
 
                     {/* ✅ Usando tu DataGridControl */}
-                    <DataGridControl
-                        rowId={"rolId"}
-                        rows={roles}
-                        columns={columns}
-                        totalItems={totalItems}
-                        pageSize={pageSize}
-                        pageIndex={pageIndex}
-                        onChangePage={({ page, pageSize }) => {
-                            setPageIndex(page);
-                            setPageSize(pageSize);
-                            fetchRoles(page, pageSize);
-                        }}
-                        fileExcelName={"Roles"}
-                    />
+                    <Box sx={{ height: 535, width: "100%" }}>
+                        <DataGridControl
+                            rowId={"rolId"}
+                            rows={roles}
+                            columns={columns}
+                            totalItems={totalItems}
+                            pageSize={pageSize}
+                            pageIndex={pageIndex}
+                            onChangePage={({ page, pageSize }) => {
+                                setPageIndex(page);
+                                setPageSize(pageSize);
+                                fetchRoles(page, pageSize);
+                            }}
+                            fileExcelName={"Roles"}
+                        />
+                    </Box>
                 </>
             ) : (
                 <RoleForm
