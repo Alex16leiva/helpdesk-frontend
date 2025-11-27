@@ -4,20 +4,17 @@ import {
     Box,
     Button,
     TextField,
-    InputAdornment,
     IconButton,
     Checkbox,
     FormControlLabel,
     Typography,
     Stack,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import { StatusBadge } from "./StatusBadge";
 import { CoreUtils } from "../../utils/CoreUtils";
 import { RestClient } from "../../api/RestClient";
-import { DataGridControl } from "../../components/Controls";
-import { SearchModalControl } from "../../components/Controls/SearchModalControl";
+import { DataGridControl, SearchModalControl, SearchControl } from "../../components/Controls";
 
 export const UserManagement = () => {
     const [users, setUsers] = useState([]);
@@ -83,7 +80,7 @@ export const UserManagement = () => {
                 setUsers(response.items);
             }
         },
-        [callService, searchTerm]
+        [callService]
     );
 
     useEffect(() => {
@@ -129,6 +126,13 @@ export const UserManagement = () => {
         });
     };
 
+    const handleKeyDown = (event) => {
+        if (event.key === "Enter") {
+            handleSearch();
+        }
+    };
+
+
     return (
         <Box sx={{ p: 2 }}>
             {!showUserForm ? (
@@ -140,29 +144,22 @@ export const UserManagement = () => {
                         alignItems="center"
                         mb={2}
                     >
-                        <TextField
-                            variant="outlined"
-                            placeholder="Buscar usuarios..."
+                        <SearchControl
+                            width={300}
+                            textSearch="Buscar"
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <SearchIcon />
-                                    </InputAdornment>
-                                ),
-                            }}
-                            size="small"
-                            sx={{ width: 320 }}
+                            onChange={event => setSearchTerm(event.target.value)}
+                            onClick={handleSearch}
+                            onKeyDown={handleKeyDown}
                         />
+
                         <Button variant="contained" color="primary" onClick={handleAddUser}>
                             Nuevo Usuario
                         </Button>
                     </Stack>
 
                     {/* DataGrid */}
-                    <Box sx={{ height: 520, width: "100%" }}>
+                    <Box sx={{ height: 535, width: "100%" }}>
                         <DataGridControl
                             rowId={"usuarioId"}
                             rows={users}
