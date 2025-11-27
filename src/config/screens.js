@@ -8,6 +8,7 @@ import { KnowledgeBase } from '../pages/Knowledge/KnowledgeBase';
 import { ArticleDetail } from '../pages/Knowledge/Articulos/ArticleDetail';
 import EditArticle from '../pages/Knowledge/Articulos/editar';
 import { CreateArticle } from '../pages/Knowledge/Articulos/crear';
+import { UserAdminDashboard } from '../pages/Security/AdminDashboard';
 
 export const Screens = [
     {
@@ -72,7 +73,7 @@ export const Screens = [
         icon: <SupportAgentIcon sx={{ fontSize: 40, color: '#333' }} />,
         info: 'Nuestro equipo de agentes está disponible para ayudarte en cualquier momento.',
         path: '/soporte',
-        element: null,
+        element: <UserAdminDashboard />,
         showInMenu: true
     }
 
