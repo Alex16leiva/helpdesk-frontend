@@ -1,14 +1,11 @@
+"use client";
 import { useCallback, useEffect, useState } from "react";
 import {
     Box,
     Button,
     TextField,
     InputAdornment,
-    Select,
-    MenuItem,
-    FormControl,
     IconButton,
-    InputLabel,
     Checkbox,
     FormControlLabel,
     Typography,
@@ -20,6 +17,7 @@ import { StatusBadge } from "./StatusBadge";
 import { CoreUtils } from "../../utils/CoreUtils";
 import { RestClient } from "../../api/RestClient";
 import { DataGridControl } from "../../components/Controls";
+import { SearchModalControl } from "../../components/Controls/SearchModalControl";
 
 export const UserManagement = () => {
     const [users, setUsers] = useState([]);
@@ -30,16 +28,6 @@ export const UserManagement = () => {
     const [pageSize, setPageSize] = useState(10);
     const [pageIndex, setPageIndex] = useState(0);
     const [callService, setCallService] = useState(0);
-    const [roles, setRoles] = useState([]);
-
-    const fetchRoles = useCallback(async () => {
-        const response = await RestClient.get("user/obtener-roles", {});
-        setRoles(response || []);
-    }, []);
-
-    useEffect(() => {
-        fetchRoles();
-    }, [fetchRoles]);
 
     const columns = [
         { field: "usuarioId", headerName: "Usuario Id", width: 150 },
@@ -83,7 +71,9 @@ export const UserManagement = () => {
                     pageSize: size,
                     sortFields: ["FechaTransaccion"],
                     ascending: false,
-                    predicate: CoreUtils.isNullOrEmpty(searchTerm) ? "" : "usuarioId.Contains(@0)",
+                    predicate: CoreUtils.isNullOrEmpty(searchTerm)
+                        ? ""
+                        : "usuarioId.Contains(@0)",
                     paramValues: CoreUtils.isNullOrEmpty(searchTerm) ? [] : [searchTerm],
                 },
             };
@@ -130,7 +120,9 @@ export const UserManagement = () => {
         const url = currentUser ? "user/editar-usuario" : "user/crear-usuario";
         RestClient.post(url, request).then((response) => {
             if (!CoreUtils.hasErrorResponse(response)) {
-                CoreUtils.notificationSuccess(currentUser ? "Usuario Editado" : "Usuario Creado");
+                CoreUtils.notificationSuccess(
+                    currentUser ? "Usuario Editado" : "Usuario Creado"
+                );
                 setShowUserForm(false);
                 fetchUsers(pageIndex, pageSize);
             }
@@ -142,7 +134,12 @@ export const UserManagement = () => {
             {!showUserForm ? (
                 <Box>
                     {/* Header */}
-                    <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+                    <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        mb={2}
+                    >
                         <TextField
                             variant="outlined"
                             placeholder="Buscar usuarios..."
@@ -187,20 +184,20 @@ export const UserManagement = () => {
                     user={currentUser}
                     onSave={handleSaveUser}
                     onCancel={() => setShowUserForm(false)}
-                    roles={roles}
                 />
             )}
         </Box>
     );
 };
 
-function UserForm({ user, onSave, onCancel, roles }) {
+function UserForm({ user, onSave, onCancel }) {
     const [formData, setFormData] = useState({
         usuarioId: user ? user.usuarioId : "",
         nombre: user ? user.nombre : "",
         apellido: user ? user.apellido : "",
         password: "",
         rolId: user ? user.rolId : "",
+        rolDescripcion: user ? user.rolDescripcion || "" : "", // descripción si la tienes en el usuario
         activo: user ? user.activo : true,
     });
 
@@ -216,6 +213,12 @@ function UserForm({ user, onSave, onCancel, roles }) {
         e.preventDefault();
         onSave(formData);
     };
+
+    // Columnas para el modal de roles
+    const roleColumns = [
+        { field: "rolId", headerName: "Rol", flex: 1 },
+        { field: "descripcion", headerName: "Descripción", flex: 2 },
+    ];
 
     return (
         <Box sx={{ maxWidth: 560, mx: "auto", p: 2 }}>
@@ -233,8 +236,20 @@ function UserForm({ user, onSave, onCancel, roles }) {
                         required
                         inputProps={{ readOnly: !!user }}
                     />
-                    <TextField label="Nombre" name="nombre" value={formData.nombre} onChange={handleChange} required />
-                    <TextField label="Apellido" name="apellido" value={formData.apellido} onChange={handleChange} required />
+                    <TextField
+                        label="Nombre"
+                        name="nombre"
+                        value={formData.nombre}
+                        onChange={handleChange}
+                        required
+                    />
+                    <TextField
+                        label="Apellido"
+                        name="apellido"
+                        value={formData.apellido}
+                        onChange={handleChange}
+                        required
+                    />
                     <TextField
                         label={`Contraseña${user ? " (dejar en blanco para mantener)" : ""}`}
                         name="password"
@@ -244,27 +259,39 @@ function UserForm({ user, onSave, onCancel, roles }) {
                         required={!user}
                     />
 
-                    <FormControl fullWidth>
-                        <InputLabel id="rolId-label">Rol</InputLabel>
-                        <Select
-                            labelId="rolId-label"
-                            id="rolId"
-                            name="rolId"
-                            label="Rol"
-                            value={formData.rolId}
-                            onChange={handleChange}
-                            required
-                        >
-                            {roles.map((role) => (
-                                <MenuItem key={role.rolId} value={role.rolId}>
-                                    {role.rolId} - {role.descripcion}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+                    {/* SearchModalControl: muestra el rol actual y permite cambiarlo */}
+                    <SearchModalControl
+                        columns={roleColumns}
+                        textSearch="Buscar Rol"
+                        setSearchValue={(rolId) =>
+                            setFormData((prev) => ({ ...prev, rolId }))
+                        }
+                        onRowSelect={(row) =>
+                            setFormData((prev) => ({
+                                ...prev,
+                                rolId: row.rolId,
+                                rolDescripcion: row.descripcion,
+                            }))
+                        }
+                        llavePrimaria="rolId"
+                        url="user/obtener-roles"
+                        initialValue={
+                            formData.rolId
+                                ? `${formData.rolId} - ${formData.rolDescripcion || ""}`.trim()
+                                : ""
+                        }
+                        displayMapper={(row) => `${row.rolId} - ${row.descripcion}`}
+                        width={320}
+                    />
 
                     <FormControlLabel
-                        control={<Checkbox name="activo" checked={formData.activo} onChange={handleChange} />}
+                        control={
+                            <Checkbox
+                                name="activo"
+                                checked={formData.activo}
+                                onChange={handleChange}
+                            />
+                        }
                         label={formData.activo ? "Activo" : "Inactivo"}
                     />
 
