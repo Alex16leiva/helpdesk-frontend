@@ -26,7 +26,15 @@ export const MainLayout = ({ children }) => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            <AppBar position="sticky" sx={{ bgcolor: 'black', top: 0, zIndex: 1100 }}>
+            <AppBar
+                position="sticky"
+                sx={{
+                    bgcolor: 'black',
+                    height: 64,        // 👈 altura fija
+                    justifyContent: 'center',
+                }}
+            >
+
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Typography
                         variant="h6"
