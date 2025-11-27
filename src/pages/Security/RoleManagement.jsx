@@ -14,23 +14,40 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
-import { DataGrid } from "@mui/x-data-grid";
 import { CoreUtils } from "../../utils/CoreUtils";
 import { RestClient } from "../../api/RestClient";
+import { DataGridControl } from "../../components/Controls"; // ✅ tu control
 
 export const RoleManagement = () => {
     const [roles, setRoles] = useState([]);
     const [showRoleForm, setShowRoleForm] = useState(false);
     const [currentRole, setCurrentRole] = useState(null);
+    const [totalItems, setTotalItems] = useState(0);
+    const [pageSize, setPageSize] = useState(10);
+    const [pageIndex, setPageIndex] = useState(0);
 
-    const fetchRoles = useCallback(async () => {
-        const response = await RestClient.get("user/obtener-roles", {});
-        setRoles(response || []);
+    const fetchRoles = useCallback(async (pageIndex, pageSize) => {
+        const request = {
+            queryInfo: {
+                pageIndex,
+                pageSize,
+                sortFields: ["rolId"],
+                ascending: true,
+                predicate: "",
+                paramValues: [],
+            },
+        };
+
+        const response = await RestClient.post("user/obtener-roles", request);
+        if (response) {
+            setRoles(response.items || []);
+            setTotalItems(response.totalItems || 0);
+        }
     }, []);
 
     useEffect(() => {
-        fetchRoles();
-    }, [fetchRoles]);
+        fetchRoles(pageIndex, pageSize);
+    }, [fetchRoles, pageIndex, pageSize]);
 
     const handleAddRole = () => {
         setCurrentRole(null);
@@ -45,10 +62,11 @@ export const RoleManagement = () => {
     const handleSaveRole = (roleData) => {
         const request = { rol: roleData };
         const url = currentRole ? "user/editar-rol" : "user/crear-rol";
+
         RestClient.post(url, request).then((response) => {
             if (!CoreUtils.hasErrorResponse(response)) {
                 setShowRoleForm(false);
-                fetchRoles();
+                fetchRoles(pageIndex, pageSize);
                 CoreUtils.notificationSuccess(currentRole ? "Rol Editado" : "Rol Creado");
             }
         });
@@ -95,14 +113,20 @@ export const RoleManagement = () => {
                         </Button>
                     </Stack>
 
-                    <DataGrid
+                    {/* ✅ Usando tu DataGridControl */}
+                    <DataGridControl
+                        rowId={"rolId"}
                         rows={roles}
                         columns={columns}
-                        getRowId={(row) => row.rolId}
-                        autoHeight
-                        disableSelectionOnClick
-                        pageSize={5}
-                        rowsPerPageOptions={[5, 10, 20]}
+                        totalItems={totalItems}
+                        pageSize={pageSize}
+                        pageIndex={pageIndex}
+                        onChangePage={({ page, pageSize }) => {
+                            setPageIndex(page);
+                            setPageSize(pageSize);
+                            fetchRoles(page, pageSize);
+                        }}
+                        fileExcelName={"Roles"}
                     />
                 </>
             ) : (
