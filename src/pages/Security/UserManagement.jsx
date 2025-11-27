@@ -7,6 +7,7 @@ import {
     Select,
     MenuItem,
     FormControl,
+    IconButton,
     InputLabel,
     Checkbox,
     FormControlLabel,
@@ -14,7 +15,7 @@ import {
     Stack,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { GridActionsCellItem } from "@mui/x-data-grid";
+import EditIcon from "@mui/icons-material/Edit";
 import { StatusBadge } from "./StatusBadge";
 import { CoreUtils } from "../../utils/CoreUtils";
 import { RestClient } from "../../api/RestClient";
@@ -64,18 +65,13 @@ export const UserManagement = () => {
         },
         {
             field: "actions",
-            type: "actions",
-            headerName: "Editar",
-            width: 100,
-            getActions: ({ row }) => [
-                <GridActionsCellItem
-                    key={row.usuarioId}
-                    icon={<i className="icon-edit"></i>}
-                    label="Editar"
-                    onClick={() => handleEditUser(row)}
-                    color="inherit"
-                />,
-            ],
+            headerName: "Acciones",
+            flex: 1,
+            renderCell: (params) => (
+                <IconButton onClick={() => handleEditUser(params.row)}>
+                    <EditIcon />
+                </IconButton>
+            ),
         },
     ];
 
