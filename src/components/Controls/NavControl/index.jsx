@@ -1,113 +1,73 @@
 import PropTypes from "prop-types";
-import { NavControlStyled } from './styles'
-import { Desktop, Mobile } from '../../../Helpers/responsive'
-import { NavItem } from './NavItem'
-import './styles.css'
-import { useDispatch, useSelector } from 'react-redux'
-import { registerCollapse } from '../ReducerControl/controlsSlicer'
-
+import { useDispatch, useSelector } from "react-redux";
+import { Drawer, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import { registerCollapse } from "../ReducerControl/controlsSlicer";
 
 export const NavControl = ({
     items,
-    className = 'navControl',
-    showGlobalNav = true,
-    width,
-    useSvgIcon = false,
     activeItem,
-    onTabChange
+    width = 240,
+    showGlobalNav = true,
+    onTabChange,
 }) => {
-
-    const { isCollapsed } = useSelector(state => state.controls);
+    const isCollapsed = useSelector((state) => state.controls.isCollapsed);
     const dispatch = useDispatch();
 
-    const onClickItem = (item) => {
-        onTabChange(item)
-    }
-
-    const changeCollapse = () => {
-
-        dispatch(registerCollapse(!isCollapsed))
-    }
+    const handleCollapseToggle = () => {
+        dispatch(registerCollapse(!isCollapsed));
+    };
 
     return (
-        <NavControlStyled width={width}>
-            <ul
-                className={
-                    showGlobalNav
-                        ? !isCollapsed
-                            ? className
-                            : `${className} collapsedNavControl`
-                        : className
-                }
-            >
-                <Desktop className='HelloMotherfucker'>
-                    {showGlobalNav && (
-                        <NavItem
-                            item={{
-                                iconName: 'GlobalNavButton',
-                                name: !isCollapsed ? 'collapse' : 'open'
-                            }}
-                            onClickItem={changeCollapse}
-                            isGlobalNavButton
-                            useSvgIcon={useSvgIcon}
-                        />
-                    )}
-                </Desktop>
+        <Drawer
+            variant="permanent"
+            sx={{
+                width: isCollapsed ? 60 : width,
+                flexShrink: 0,
+                [`& .MuiDrawer-paper`]: {
+                    width: isCollapsed ? 60 : width,
+                    boxSizing: "border-box",
+                    transition: "width 0.3s ease",
+                    top: 64,              // 👈 altura del AppBar
+                    height: `calc(100% - 64px)`, // 👈 ocupa el resto de la pantalla
+                },
+            }}
+        >
+            <List>
+                {showGlobalNav && (
+                    <ListItemButton onClick={handleCollapseToggle}>
+                        <ListItemIcon>
+                            <MenuIcon />
+                        </ListItemIcon>
+                    </ListItemButton>
+                )}
 
-                <Mobile>
-                    {showGlobalNav && (
-                        <NavItem
-                            item={{
-                                iconName: 'GlobalNavButton',
-                                name: !isCollapsed ? 'collapse' : 'open'
-                            }}
-                            onClickItem={changeCollapse}
-                            isGlobalNavButton
-                            useSvgIcon={useSvgIcon}
-                        />
-                    )}
-                </Mobile>
-
-                {!isCollapsed &&
-                    items.map(item => (
-                        <NavItem
-                            key={item.name}
-                            item={item}
-                            onClickItem={onClickItem}
-                            activeItem={activeItem}
-                            useSvgIcon={useSvgIcon}
-                        />
-                    ))
-                }
-                {isCollapsed &&
-                    <div>
-                        {
-                            items.map(item => (
-                                <NavItem
-                                    key={item.name}
-                                    item={item}
-                                    onClickItem={onClickItem}
-                                    activeItem={activeItem}
-                                    useSvgIcon={useSvgIcon}
-                                    notTitle
-                                />
-                            ))
-                        }
-                    </div>
-
-                }
-            </ul>
-        </NavControlStyled>
-    )
-}
+                {items.map((item) => (
+                    <ListItemButton
+                        key={item.name}
+                        selected={activeItem === item.name}
+                        onClick={() => onTabChange(item)}
+                        sx={{
+                            "&.Mui-selected": {
+                                backgroundColor: "#e0e0e0",
+                                color: "primary.main",
+                                fontWeight: "bold",
+                            },
+                        }}
+                    >
+                        <ListItemIcon>{item.icon}</ListItemIcon>
+                        {!isCollapsed && <ListItemText primary={item.nameShow || item.name} />}
+                    </ListItemButton>
+                ))}
+            </List>
+        </Drawer>
+    );
+};
 
 NavControl.propTypes = {
     items: PropTypes.arrayOf(PropTypes.object).isRequired,
     activeItem: PropTypes.string,
-    onClickItem: PropTypes.func,
-    className: PropTypes.string,
-    useSvgIcon: PropTypes.bool,
+    width: PropTypes.number,
     showGlobalNav: PropTypes.bool,
-    width: PropTypes.string,
     onTabChange: PropTypes.func.isRequired,
-}
+};
