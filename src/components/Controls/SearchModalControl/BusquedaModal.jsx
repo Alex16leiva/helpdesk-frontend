@@ -74,8 +74,6 @@ export const BusquedaModal = ({
     };
 
     const handleRowDoubleClick = (params) => {
-        console.log(params);
-
         setSelectedRow(params.row);
         onSelect(params.row);
         onClose();
