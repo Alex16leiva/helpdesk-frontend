@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Box,
     Button,
@@ -24,7 +24,6 @@ export const UserManagement = () => {
     const [totalItems, setTotalItems] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [pageIndex, setPageIndex] = useState(0);
-    const [callService, setCallService] = useState(0);
 
     const columns = [
         { field: "usuarioId", headerName: "Usuario Id", width: 150 },
@@ -60,35 +59,35 @@ export const UserManagement = () => {
         },
     ];
 
-    const fetchUsers = useCallback(
-        async (pageIdx, size) => {
-            const request = {
-                queryInfo: {
-                    pageIndex: pageIdx,
-                    pageSize: size,
-                    sortFields: ["FechaTransaccion"],
-                    ascending: false,
-                    predicate: CoreUtils.isNullOrEmpty(searchTerm)
-                        ? ""
-                        : "usuarioId.Contains(@0)",
-                    paramValues: CoreUtils.isNullOrEmpty(searchTerm) ? [] : [searchTerm],
-                },
-            };
-            const response = await RestClient.post("user/obtener-usuarios", request);
-            if (response) {
-                setTotalItems(response.totalItems);
-                setUsers(response.items);
-            }
-        },
-        [callService]
-    );
+    const fetchUsers = async (pageIdx, size) => {
+        const request = {
+            queryInfo: {
+                pageIndex: pageIdx,
+                pageSize: size,
+                sortFields: ["FechaTransaccion"],
+                ascending: false,
+                predicate: CoreUtils.isNullOrEmpty(searchTerm)
+                    ? ""
+                    : "usuarioId.Contains(@0)",
+                paramValues: CoreUtils.isNullOrEmpty(searchTerm) ? [] : [searchTerm],
+            },
+        };
+
+        const response = await RestClient.post("user/obtener-usuarios", request);
+
+        if (response) {
+            setTotalItems(response.totalItems || 0);
+            setUsers(response.items || []);
+        }
+    };
+
 
     useEffect(() => {
         fetchUsers(pageIndex, pageSize);
-    }, [fetchUsers, pageIndex, pageSize]);
+    }, [pageIndex, pageSize]);
 
     const handleSearch = () => {
-        setCallService((item) => item + 1);
+
         fetchUsers(pageIndex, pageSize);
     };
 
