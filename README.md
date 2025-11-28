@@ -53,5 +53,11 @@ A full-stack helpdesk application built with **ASP.NET Core** and **React**, des
 
 ---
 
+## 📌 Repositories
+[Helpdesk Backend Repository](https://github.com/Alex16leiva/helpdesk-backend)
+[Helpdesk Frontend Repository](https://github.com/Alex16leiva/helpdesk-frontend)
+
+---
+
 ## 🌐 Other Languages
 For Spanish documentation, see [README.es.md](README.es.md).
