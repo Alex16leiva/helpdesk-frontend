@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Box,
     Button,
@@ -27,36 +27,39 @@ export const RoleManagement = () => {
     const [pageSize, setPageSize] = useState(10);
     const [pageIndex, setPageIndex] = useState(0);
 
-    const fetchRoles = useCallback(
-        async (pageIndex, pageSize) => {
-            const request = {
-                queryInfo: {
-                    pageIndex,
-                    pageSize,
-                    sortFields: ["rolId"],
-                    ascending: true,
-                    predicate: searchTerm ? "nombreRol.Contains(@0)" : "", // ejemplo de filtro
-                    paramValues: searchTerm ? [searchTerm] : [],
-                },
-            };
+    const fetchRoles = (pageIndex, pageSize) => {
+        const request = {
+            queryInfo: {
+                pageIndex,
+                pageSize,
+                sortFields: ["rolId"],
+                ascending: true,
+                predicate: CoreUtils.isNullOrEmpty(searchTerm) ? "" : "RolId.Contains(@0)",
+                paramValues: CoreUtils.isNullOrEmpty(searchTerm) ? [] : [searchTerm],
+            },
+        };
 
-            const response = await RestClient.post("user/obtener-roles", request);
-            if (response) {
-                setRoles(response.items || []);
-                setTotalItems(response.totalItems || 0);
-            }
-        }, []);
+        RestClient.post("user/obtener-roles", request)
+            .then((response) => {
+                if (response) {
+                    setRoles(response.items || []);
+                    setTotalItems(response.totalItems || 0);
+                }
+            });
+    };
 
 
     const handleKeyDown = (event) => {
         if (event.key === "Enter") {
+            console.log(searchTerm);
+
             fetchRoles(pageIndex, pageSize);
         }
     }
 
     useEffect(() => {
         fetchRoles(pageIndex, pageSize);
-    }, [fetchRoles, pageIndex, pageSize]);
+    }, [pageIndex, pageSize]);
 
     const handleAddRole = () => {
         setCurrentRole(null);
