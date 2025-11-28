@@ -53,8 +53,8 @@ Aplicación full stack para la gestión de tickets de soporte, desarrollada con 
 
 ---
 ## 📌 Repositorios
-[Helpdesk Backend Repository](https://github.com/Alex16leiva/helpdesk-backend)
-[Helpdesk Frontend Repository](https://github.com/Alex16leiva/helpdesk-frontend)
+-[Helpdesk Backend Repository](https://github.com/Alex16leiva/helpdesk-backend)
+-[Helpdesk Frontend Repository](https://github.com/Alex16leiva/helpdesk-frontend)
 
 ---
 ## 🌐 Otros idiomas
