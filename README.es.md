@@ -52,6 +52,12 @@ Aplicación full stack para la gestión de tickets de soporte, desarrollada con 
 - Soporte multilenguaje  
 
 ---
+## 📌 Proyectos
+- Ejemplo en el backend:
+- Frontend repository: Helpdesk Frontend
+- Ejemplo en el frontend:
+- Backend repository: Helpdesk Backend
 
+---
 ## 🌐 Otros idiomas
 Para la documentación en inglés, ver [README.md](README.md).
